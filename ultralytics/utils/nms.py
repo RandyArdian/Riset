@@ -1,5 +1,5 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
-h
+
 import sys
 import time
 
@@ -9,6 +9,36 @@ from ultralytics.utils import LOGGER
 from ultralytics.utils.metrics import batch_probiou, box_iou
 from ultralytics.utils.ops import xywh2xyxy
 
+def soft_nms(bboxes, scores, iou_thresh=0.5,sigma=0.5,score_threshold=0.25):
+    order = torch.arange(0, scores.size(0)).to(bboxes.device)
+    keep = []
+    
+    while order.numel() > 1:
+        if order.numel() == 1:
+            keep.append(order[0])
+            break
+        else:
+            i = order[0]
+            keep.append(i)
+        
+        iou = bbox_iou_for_nms(bboxes[i], bboxes[order[1:]]).squeeze()
+        
+        idx = (iou > iou_thresh).nonzero().squeeze()
+        if idx.numel() > 0: 
+            iou = iou[idx] 
+            newScores = torch.exp(-torch.pow(iou,2)/sigma)
+            scores[order[idx+1]] *= newScores
+        
+        newOrder = (scores[order[1:]] > score_threshold).nonzero().squeeze() 
+        if newOrder.numel() == 0: 
+            break
+        else:
+            maxScoreIndex = torch.argmax(scores[order[newOrder+1]]) 
+            if maxScoreIndex != 0: 
+                newOrder[[0,maxScoreIndex],] = newOrder[[maxScoreIndex,0],]
+            order = order[newOrder+1]
+    
+    return torch.LongTensor(keep
 
 def non_max_suppression(
     prediction,
@@ -150,8 +180,8 @@ def non_max_suppression(
             # Speed strategy: torchvision for val or already loaded (faster), TorchNMS for predict (lower latency)
             if "torchvision" in sys.modules:
                 import torchvision  # scope as slow import
-
-                i = torchvision.ops.nms(boxes, scores, iou_thres)
+                i = soft_nms(boxes, scores, iou_thres)
+                #i = torchvision.ops.nms(boxes, scores, iou_thres)
             else:
                 i = TorchNMS.nms(boxes, scores, iou_thres)
         i = i[:max_det]  # limit detections
