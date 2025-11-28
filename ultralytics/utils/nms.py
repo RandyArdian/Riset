@@ -129,8 +129,7 @@ def soft_nms(bboxes, scores, iou_thresh=0.5,sigma=0.5,score_threshold=0.25):
                 newOrder[[0,maxScoreIndex],] = newOrder[[maxScoreIndex,0],]
             order = order[newOrder+1]
     
-    return torch.LongTensor(keep
-                            
+    return torch.LongTensor(keep)
 def non_max_suppression(
     prediction,
     conf_thres: float = 0.25,
