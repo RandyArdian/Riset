@@ -1554,6 +1554,7 @@ def parse_model(d, ch, verbose=True):
             C2fCIB,
             A2C2f,
             SPDConv,
+            MFAM,
             SPDConv_Gelu,
         }
     )
