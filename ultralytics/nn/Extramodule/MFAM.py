@@ -67,3 +67,4 @@ class MFAM(nn.Module):
         path4= self.cv6(self.cv5(x))
         add=path1+path2+path3+path4+identity
         return self.cv7(add)
+
