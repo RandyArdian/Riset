@@ -1556,6 +1556,7 @@ def parse_model(d, ch, verbose=True):
             SPDConv,
             MFAM,
             SPDConv_Gelu,
+            TCMUNiXt,
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
