@@ -1,3 +1,5 @@
+import torch
+import torch.nn as nn
 class BiFPN_Concat2(nn.Module):
     def __init__(self, dimension=1):
         super(BiFPN_Concat2, self).__init__()
