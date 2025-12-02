@@ -4,10 +4,6 @@ class BiFPN_Concat2(nn.Module):
         self.d = dimension
         self.w = nn.Parameter(torch.ones(2, dtype=torch.float32), requires_grad=True)
         self.epsilon = 0.0001
-        # 设置可学习参数 nn.Parameter的作用是：将一个不可训练的类型Tensor转换成可以训练的类型 
-        parameter
-        # 并且会向宿主模型注册该参数 成为其一部分 即model.parameters()会包含这个parameter
-        # 从而在参数优化的时候可以自动一起优化
  
     def forward(self, x):
         w = self.w
