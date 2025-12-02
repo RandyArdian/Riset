@@ -83,8 +83,8 @@ class LSKA(nn.Module):
 class SPPF_LSKA(nn.Module):
     """Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher."""
  
-    def _init_(self, c1, c2, k=5):  # equivalent to SPP(k=(5, 9, 13))
-        super()._init_()
+    def __init__(self, c1, c2, k=5):  # equivalent to SPP(k=(5, 9, 13))
+        super().__init__()
         c_ = c1 // 2  # hidden channels
         self.cv1 = Conv(c1, c_, 1, 1)
         self.cv2 = Conv(c_ * 4, c2, 1, 1)
@@ -98,3 +98,4 @@ class SPPF_LSKA(nn.Module):
         y2 = self.m(y1)
 
         return self.cv2(self.lska(torch.cat((x, y1, y2, self.m(y2)), 1)))
+
