@@ -4,7 +4,10 @@ from .MFAM import *
 from .TCMUNiXt import *
 from .SPPF_MLCA import *
 from .SPPF_LSKA import *
-from .BiFPN_Concat import *
+from .BiFPN_Concat2 import *
+from .BiFPN_Concat3 import *
+
+
 
 
 
