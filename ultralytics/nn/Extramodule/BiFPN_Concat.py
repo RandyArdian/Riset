@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
  
- def autopad(k, p=None, d=1):
+def autopad(k, p=None, d=1):
     if d > 1:
         k = d * (k - 1) + 1 if isinstance(k, int) else [d * (x - 1) + 1 for x in k]  # actual kernel-size
     if p is None:
         p = k // 2 if isinstance(k, int) else [x // 2 for x in k]  # auto-pad
     return p
  
- class Conv(nn.Module):
+class Conv(nn.Module):
     default_act = nn.SiLU()  # default activation
      def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
         super().__init__()
