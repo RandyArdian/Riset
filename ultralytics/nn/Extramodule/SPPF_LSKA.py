@@ -96,4 +96,5 @@ class SPPF_LSKA(nn.Module):
         x = self.cv1(x)
         y1 = self.m(x)
         y2 = self.m(y1)
+
         return self.cv2(self.lska(torch.cat((x, y1, y2, self.m(y2)), 1)))
