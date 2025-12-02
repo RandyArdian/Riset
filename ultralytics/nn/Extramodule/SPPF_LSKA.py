@@ -33,8 +33,8 @@ class Conv(nn.Module):
 class LSKA(nn.Module):
     # Large-Separable-Kernel-Attention
     # https://github.com/StevenLauHKHK/Large-Separable-Kernel-Attention/tree/main
-    def _init_(self, dim, k_size=7):
-        super()._init_()
+    def __init__(self, dim, k_size=7):
+        super().__init__()
 
         self.k_size = k_size
 
@@ -98,4 +98,5 @@ class SPPF_LSKA(nn.Module):
         y2 = self.m(y1)
 
         return self.cv2(self.lska(torch.cat((x, y1, y2, self.m(y2)), 1)))
+
 
