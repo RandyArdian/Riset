@@ -270,8 +270,8 @@ def non_max_suppression(
             # Speed strategy: torchvision for val or already loaded (faster), TorchNMS for predict (lower latency)
             if "torchvision" in sys.modules:
                 import torchvision  # scope as slow import
-                i = soft_nms(boxes, scores, iou_thres)
-                #i = torchvision.ops.nms(boxes, scores, iou_thres)
+                #i = soft_nms(boxes, scores, iou_thres)
+                i = torchvision.ops.nms(boxes, scores, iou_thres)
             else:
                 i = TorchNMS.nms(boxes, scores, iou_thres)
         i = i[:max_det]  # limit detections
