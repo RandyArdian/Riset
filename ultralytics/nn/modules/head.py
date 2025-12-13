@@ -24,7 +24,7 @@ from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmcv.ops.modulated_deform_conv import ModulatedDeformConv2d
 from mmengine.model import constant_init, normal_init
 
-from DCNv4.modules.dcnv4 import DCNv4
+from DCNv4.DCNv4_op.DCNv4 import DCNv4
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     """Pad to 'same' shape outputs."""
     if d > 1:
