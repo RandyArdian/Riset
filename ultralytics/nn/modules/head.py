@@ -265,7 +265,7 @@ class DyHeadBlock(nn.Module):
         #self.spatial_conv_low = DyDCNv2(in_channels, in_channels, stride=2)
         self.spatial_conv_high = DCNv4(in_channels)
         self.spatial_conv_mid = DCNv4(in_channels)
-        self.spatial_conv_low = DCNv4(in_channels, s=2)
+        self.spatial_conv_low = DCNv4(in_channels, stride=2)
                      
         self.spatial_conv_offset = nn.Conv2d(
             in_channels, self.offset_and_mask_dim, 3, padding=1)
