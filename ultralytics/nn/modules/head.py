@@ -24,7 +24,6 @@ from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmcv.ops.modulated_deform_conv import ModulatedDeformConv2d
 from mmengine.model import constant_init, normal_init
 
-from DCNv4.DCNv4_op.DCNv4 import DCNv4
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     """Pad to 'same' shape outputs."""
     if d > 1:
@@ -260,12 +259,12 @@ class DyHeadBlock(nn.Module):
         elif norm_type == 'BN':
             norm_dict = dict(type='BN', requires_grad=True)
         
-        #self.spatial_conv_high = DyDCNv2(in_channels, in_channels, norm_cfg=norm_dict)
-        #self.spatial_conv_mid = DyDCNv2(in_channels, in_channels)
-        #self.spatial_conv_low = DyDCNv2(in_channels, in_channels, stride=2)
-        self.spatial_conv_high = DCNv4(in_channels)
-        self.spatial_conv_mid = DCNv4(in_channels)
-        self.spatial_conv_low = DCNv4(in_channels, stride=2)
+        self.spatial_conv_high = DyDCNv2(in_channels, in_channels, norm_cfg=norm_dict)
+        self.spatial_conv_mid = DyDCNv2(in_channels, in_channels)
+        self.spatial_conv_low = DyDCNv2(in_channels, in_channels, stride=2)
+        #self.spatial_conv_high = DCNv4(in_channels)
+        #self.spatial_conv_mid = DCNv4(in_channels)
+        #self.spatial_conv_low = DCNv4(in_channels, stride=2)
                      
         self.spatial_conv_offset = nn.Conv2d(
             in_channels, self.offset_and_mask_dim, 3, padding=1)
