@@ -9,7 +9,7 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
-from .Extramodule import *
+
 from ultralytics.nn.autobackend import check_class_names
 from ultralytics.nn.modules import (
     AIFI,
@@ -92,6 +92,8 @@ from ultralytics.utils.torch_utils import (
     smart_inference_mode,
     time_sync,
 )
+
+from .Extramodule import *
 
 
 class BaseModel(torch.nn.Module):
@@ -1628,12 +1630,12 @@ def parse_model(d, ch, verbose=True):
         elif m is torch.nn.BatchNorm2d:
             args = [ch[f]]
         elif m in {MLCA}:
-            c2=ch[f]
-            args= [c2, *args]    
+            c2 = ch[f]
+            args = [c2, *args]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
-        elif m in [BiFPN_Concat2,BiFPN_Concat3]:
-            c2 = sum(ch[x] for x in f)    
+        elif m in [BiFPN_Concat2, BiFPN_Concat3]:
+            c2 = sum(ch[x] for x in f)
         elif m in frozenset(
             {Detect, WorldDetect, YOLOEDetect, Segment, YOLOESegment, Pose, OBB, ImagePoolingAttn, v10Detect}
         ):

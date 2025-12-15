@@ -1,24 +1,21 @@
 class DyHeadBlock(nn.Module):
-    """DyHead Block with three types of attention.
-    HSigmoid arguments in default act_cfg follow official code, not paper.
-    https://github.com/microsoft/DynamicHead/blob/master/dyhead/dyrelu.py
+    """DyHead Block with three types of attention. HSigmoid arguments in default act_cfg follow official code, not
+    paper. https://github.com/microsoft/DynamicHead/blob/master/dyhead/dyrelu.py.
     """
 
-    def __init__(self,
-                 in_channels,
-                 norm_type='GN',
-                 zero_init_offset=True,
-                 act_cfg=dict(type='HSigmoid', bias=3.0, divisor=6.0)):
+    def __init__(
+        self, in_channels, norm_type="GN", zero_init_offset=True, act_cfg=dict(type="HSigmoid", bias=3.0, divisor=6.0)
+    ):
         super().__init__()
         self.zero_init_offset = zero_init_offset
         # (offset_x, offset_y, mask) * kernel_size_y * kernel_size_x
         self.offset_and_mask_dim = 3 * 3 * 3
         self.offset_dim = 2 * 3 * 3
 
-        if norm_type == 'GN':
-            norm_dict = dict(type='GN', num_groups=16, requires_grad=True)
-        elif norm_type == 'BN':
-            norm_dict = dict(type='BN', requires_grad=True)
+        if norm_type == "GN":
+            norm_dict = dict(type="GN", num_groups=16, requires_grad=True)
+        elif norm_type == "BN":
+            norm_dict = dict(type="BN", requires_grad=True)
 
         self.spatial_conv_high = DyDCNv2(in_channels, in_channels, norm_cfg=norm_dict)
 
@@ -30,11 +27,13 @@ class DyHeadBlock(nn.Module):
 
         self.spatial_conv_low = DyDCNv2(in_channels, in_channels, stride=2)
 
-        self.spatial_conv_offset = nn.Conv2d(
-            in_channels, self.offset_and_mask_dim, 3, padding=1)
+        self.spatial_conv_offset = nn.Conv2d(in_channels, self.offset_and_mask_dim, 3, padding=1)
         self.scale_attn_module = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1), nn.Conv2d(in_channels, 1, 1),
-            nn.ReLU(inplace=True), build_activation_layer(act_cfg))
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(in_channels, 1, 1),
+            nn.ReLU(inplace=True),
+            build_activation_layer(act_cfg),
+        )
         self.task_attn_module = DyReLUB(in_channels)
         self._init_weights()
 
@@ -52,8 +51,8 @@ class DyHeadBlock(nn.Module):
             # print(f'level: {level}')
             # calculate offset and mask of DCNv2 from middle-level feature
             offset_and_mask = self.spatial_conv_offset(x[level])
-            offset = offset_and_mask[:, :self.offset_dim, :, :]
-            mask = offset_and_mask[:, self.offset_dim:, :, :].sigmoid()
+            offset = offset_and_mask[:, : self.offset_dim, :, :]
+            mask = offset_and_mask[:, self.offset_dim :, :, :].sigmoid()
 
             # mid_feat = self.spatial_conv_mid(x[level], offset, mask)
 
@@ -73,17 +72,19 @@ class DyHeadBlock(nn.Module):
                 high_feat = F.interpolate(
                     self.spatial_conv_high(x[level + 1], offset, mask),
                     size=x[level].shape[-2:],
-                    mode='bilinear',
-                    align_corners=True)
+                    mode="bilinear",
+                    align_corners=True,
+                )
                 sum_feat += high_feat * self.scale_attn_module(high_feat)
                 summed_levels += 1
             outs.append(self.task_attn_module(sum_feat / summed_levels))
 
         return outs
-       
+
+
 class DyDetect(Detect):
     def __init__(self, nc=10, ch=()):  # detection layer
-        super(DyDetect, self).__init__(nc, ch)
+        super().__init__(nc, ch)
         self.dyhead = nn.Sequential(*[DyHeadBlock(ch[0]) for _ in range(2)])
         self.cv2 = nn.ModuleList(nn.Sequential(nn.Conv2d(x, 4 * self.reg_max, 1)) for x in ch)
         self.cv3 = nn.ModuleList(nn.Sequential(nn.Conv2d(x, self.nc, 1)) for x in ch)

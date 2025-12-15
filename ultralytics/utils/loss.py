@@ -137,6 +137,8 @@ class BboxLoss1(nn.Module):
             loss_dfl = torch.tensor(0.0).to(pred_dist.device)
 
         return loss_iou, loss_dfl
+
+
 class BboxLoss(nn.Module):
     """Criterion class for computing training losses for bounding boxes."""
 
@@ -148,7 +150,7 @@ class BboxLoss(nn.Module):
     def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
         """Compute IoU and DFL losses for bounding boxes."""
         weight = target_scores.sum(-1)[fg_mask].unsqueeze(-1)
-        iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, WIoU=True,scale=True)
+        iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, WIoU=True, scale=True)
         if type(iou) is tuple:
             if len(iou) == 2:
                 loss_iou = ((1.0 - iou[0]) * iou[1].detach() * weight).sum() / target_scores_sum
@@ -156,7 +158,6 @@ class BboxLoss(nn.Module):
                 loss_iou = (iou[0] * iou[1] * weight).sum() / target_scores_sum
         else:
             loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
-        	    
 
         # DFL loss
         if self.dfl_loss:
