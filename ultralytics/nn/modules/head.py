@@ -406,8 +406,8 @@ class Detect(nn.Module):
         """Concatenate and return predicted bounding boxes and class probabilities."""
         if self.end2end:
             return self.forward_end2end(x)
-        for dyhead_layer in self.dyhead:
-            x = dyhead_layer(x)
+        #for dyhead_layer in self.dyhead:
+            #x = dyhead_layer(x)
 
         for i in range(self.nl):
             x[i] = torch.cat((self.cv2[i](x[i]), self.cv3[i](x[i])), 1)
