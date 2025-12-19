@@ -105,7 +105,7 @@ class DFLoss(nn.Module):
         ).mean(-1, keepdim=True)
 
 
-class BboxLoss1(nn.Module):
+class BboxLoss(nn.Module):
     """Criterion class for computing training losses for bounding boxes."""
 
     def __init__(self, reg_max: int = 16):
@@ -137,7 +137,7 @@ class BboxLoss1(nn.Module):
             loss_dfl = torch.tensor(0.0).to(pred_dist.device)
 
         return loss_iou, loss_dfl
-class BboxLoss(nn.Module):
+class BboxLoss1(nn.Module):
     """Criterion class for computing training losses for bounding boxes."""
 
     def __init__(self, reg_max=16):
