@@ -1559,6 +1559,7 @@ def parse_model(d, ch, verbose=True):
             TCMUNiXt,
             SPPF_MLCA,
             SPPF_LSKA,
+            SOB,
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
@@ -1609,6 +1610,10 @@ def parse_model(d, ch, verbose=True):
                 legacy = False
                 if scale in "mlx":
                     args[3] = True
+            if m is SOB:  # for M/L/X sizes
+                legacy = False
+                if scale in "mlx":
+                    args[3] = True
             if m is A2C2f:
                 legacy = False
                 if scale in "lx":  # for L/X sizes
@@ -1629,7 +1634,9 @@ def parse_model(d, ch, verbose=True):
             args = [ch[f]]
         elif m in {MLCA}:
             c2=ch[f]
-            args= [c2, *args]    
+            args= [c2, *args]
+        elif m in {DySample}:
+            args= [ch[f], *args[0:]]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
         elif m in [BiFPN_Concat2,BiFPN_Concat3]:
