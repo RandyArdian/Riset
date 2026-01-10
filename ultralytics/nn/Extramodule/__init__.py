@@ -7,6 +7,8 @@ from .SPPF_LSKA import *
 from .BiFPN_Concat2 import *
 from .BiFPN_Concat3 import *
 from .MLCA import *
+from .SOB import *
+
 
 
 
