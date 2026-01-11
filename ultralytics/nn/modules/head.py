@@ -363,7 +363,7 @@ class Detect(nn.Module):
     shape = None
     anchors = torch.empty(0)  # init
     strides = torch.empty(0)  # init
-    legacy = True  # backward compatibility for v3/v5/v8/v9 models
+    legacy = False  # backward compatibility for v3/v5/v8/v9 models
     xyxy = False  # xyxy or xywh output
 
     def __init__(self, nc: int = 80, ch: tuple = ()):
@@ -382,10 +382,10 @@ class Detect(nn.Module):
         self.dyhead = nn.Sequential(*[DyHeadBlock(ch[0]) for i in range(2)])
         c2, c3 = max((16, ch[0] // 4, self.reg_max * 4)), max(ch[0], min(self.nc, 100))  # channels
         self.cv2 = nn.ModuleList(
-            nn.Sequential(Conv(x, c2, 3,1), nn.Conv2d(c2, 4 * self.reg_max, 1,1)) for x in ch
+            nn.Sequential(Conv(x, c2, 3),Conv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1)) for x in ch
         )
         self.cv3 = (
-            nn.ModuleList(nn.Sequential(Conv(x, c3, 3, 1), nn.Conv2d(c3, self.nc, 1,1)) for x in ch)
+            nn.ModuleList(nn.Sequential(Conv(x, c3, 3),Conv(c3, c3, 3), nn.Conv2d(c3, self.nc, 1)) for x in ch)
             if self.legacy
             else nn.ModuleList(
                 nn.Sequential(
