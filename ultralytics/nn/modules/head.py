@@ -363,7 +363,7 @@ class Detect(nn.Module):
     shape = None
     anchors = torch.empty(0)  # init
     strides = torch.empty(0)  # init
-    legacy = False  # backward compatibility for v3/v5/v8/v9 models
+    legacy = True  # backward compatibility for v3/v5/v8/v9 models
     xyxy = False  # xyxy or xywh output
 
     def __init__(self, nc: int = 80, ch: tuple = ()):
