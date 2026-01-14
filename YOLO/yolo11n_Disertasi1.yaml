@@ -26,11 +26,11 @@ backbone:
 
 # YOLO11n head
 head:
-  - [-1, 1, DySample, []] #9
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] #9
   - [[-1, 4], 1, Concat, [1]] # 10
   - [-1, 2, C3k2, [512, False]] # 11
 
-  - [-1, 1, DySample, []] #12
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] #12
   - [[-1, 2], 1, Concat, [1]] # 13
   - [-1, 2, C3k2, [256, False]] # 14
 
