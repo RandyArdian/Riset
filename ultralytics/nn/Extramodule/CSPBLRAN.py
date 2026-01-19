@@ -379,10 +379,10 @@ class AttentionLePE(nn.Module):
     
 class Block(nn.Module):
     def __init__(self, dim, drop_path=0., layer_scale_init_value=-1,
-                       num_heads=8, n_win=4, qk_dim=None, qk_scale=None,
+                       num_heads=8, n_win=7, qk_dim=None, qk_scale=None,
                        kv_per_win=4, kv_downsample_ratio=4, kv_downsample_kernel=None, kv_downsample_mode='ada_avgpool',
                        topk=4, param_attention="qkvo", param_routing=False, diff_routing=False, soft_routing=False, mlp_ratio=4, mlp_dwconv=False,
-                       side_dwconv=5, before_attn_dwconv=3, pre_norm=True, auto_pad=False):
+                       side_dwconv=5, before_attn_dwconv=3, pre_norm=True, auto_pad=True):
         super().__init__()
         qk_dim = qk_dim or dim
 
@@ -479,4 +479,5 @@ class CSPBLRAN(nn.Module):
         x2 = self.blocks(x2)               # hanya jalur kedua yang masuk BLRAN
         y = torch.cat((x1, x2), dim=1)
         y = self.act(self.bn2(self.cv2(y)))
+
         return y
