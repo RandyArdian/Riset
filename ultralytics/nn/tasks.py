@@ -1560,6 +1560,7 @@ def parse_model(d, ch, verbose=True):
             SPPF_MLCA,
             SPPF_LSKA,
             SOB,
+            CSPBLRAN,
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
