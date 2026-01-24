@@ -458,7 +458,7 @@ class Block(nn.Module):
         return x
 
 class CSPBLRAN(nn.Module):
-    def __init__(self, in_channels, out_channels, n_blocks=2, expand=0.5, **block_kwargs):
+    def __init__(self, in_channels, out_channels, n_blocks=3, expand=0.5, **block_kwargs):
         super().__init__()
         hidden = int(out_channels * expand)
 
@@ -481,5 +481,6 @@ class CSPBLRAN(nn.Module):
         y = self.act(self.bn2(self.cv2(y)))
 
         return y
+
 
 
