@@ -10,17 +10,18 @@ def autopad(k, p=None, d=1):  # kernel, padding, dilation
         p = k // 2 if isinstance(k, int) else [x // 2 for x in k]  # auto-pad
     return p
 
+
 class Conv(nn.Module):
     """Standard convolution with args(ch_in, ch_out, kernel, stride, padding, groups, dilation, activation)."""
 
-    #default_act = nn.SiLU()  # default activation
+    # default_act = nn.SiLU()  # default activation
 
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
         """Initialize Conv layer with given arguments including activation."""
         super().__init__()
         self.conv = nn.Conv2d(c1, c2, k, s, autopad(k, p, d), groups=g, dilation=d, bias=False)
         self.bn = nn.BatchNorm2d(c2)
-        self.act =  nn.SiLU() if act is True else act if isinstance(act, nn.Module) else nn.Identity()
+        self.act = nn.SiLU() if act is True else act if isinstance(act, nn.Module) else nn.Identity()
 
     def forward(self, x):
         """Apply convolution, batch normalization and activation to input tensor."""
@@ -29,6 +30,7 @@ class Conv(nn.Module):
     def forward_fuse(self, x):
         """Perform transposed convolution of 2D data."""
         return self.act(self.conv(x))
+
 
 class Bottleneck(nn.Module):
     """Standard bottleneck."""
@@ -39,13 +41,14 @@ class Bottleneck(nn.Module):
         c_ = int(c2 * e)  # hidden channels
         self.cv1 = Conv(c1, c_, k[0], 1)
         self.cv2 = Conv(c_, c2, k[1], 1, g=g)
-        self.cv3 = Conv(c2, c2, k=3) 
+        self.cv3 = Conv(c2, c2, k=3)
         self.kali = shortcut and c1 == c2
 
     def forward(self, x):
         """Applies the YOLO FPN to input data."""
         return self.cv3(x * self.cv2(self.cv1(x))) if self.kali else self.cv2(self.cv1(x))
-    
+
+
 class C3(nn.Module):
     """CSP Bottleneck with 3 convolutions."""
 
@@ -61,6 +64,7 @@ class C3(nn.Module):
     def forward(self, x):
         """Forward pass through the CSP bottleneck with 2 convolutions."""
         return self.cv3(torch.cat((self.m(self.cv1(x)), self.cv2(x)), 1))
+
 
 class C3k(C3):
     """C3k is a CSP bottleneck module with customizable kernel sizes for feature extraction in neural networks."""
@@ -96,7 +100,8 @@ class C2f(nn.Module):
         y = [y[0], y[1]]
         y.extend(m(y[-1]) for m in self.m)
         return self.cv2(torch.cat(y, 1))
-    
+
+
 class SOB(C2f):
     """Faster Implementation of CSP Bottleneck with 2 convolutions."""
 
