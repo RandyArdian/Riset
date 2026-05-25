@@ -89,13 +89,13 @@ class Detect(nn.Module):
         self.reg_max = 16  # DFL channels (ch[0] // 16 to scale 4/8/12/16/20 for n/s/m/l/x)
         self.no = nc + self.reg_max * 4  # number of outputs per anchor
         self.stride = torch.zeros(self.nl)  # strides computed during build
-        #self.dyhead = nn.Sequential(*[DyHeadBlock(ch[0]) for i in range(2)])
+        # self.dyhead = nn.Sequential(*[DyHeadBlock(ch[0]) for i in range(2)])
         c2, c3 = max((16, ch[0] // 4, self.reg_max * 4)), max(ch[0], min(self.nc, 100))  # channels
         self.cv2 = nn.ModuleList(
-            nn.Sequential(Conv(x, c2, 3),Conv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1)) for x in ch
+            nn.Sequential(Conv(x, c2, 3), Conv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1)) for x in ch
         )
         self.cv3 = (
-            nn.ModuleList(nn.Sequential(Conv(x, c3, 3),Conv(c3, c3, 3), nn.Conv2d(c3, self.nc, 1)) for x in ch)
+            nn.ModuleList(nn.Sequential(Conv(x, c3, 3), Conv(c3, c3, 3), nn.Conv2d(c3, self.nc, 1)) for x in ch)
             if self.legacy
             else nn.ModuleList(
                 nn.Sequential(
@@ -116,8 +116,8 @@ class Detect(nn.Module):
         """Concatenate and return predicted bounding boxes and class probabilities."""
         if self.end2end:
             return self.forward_end2end(x)
-        #for dyhead_layer in self.dyhead:
-            #x = dyhead_layer(x)
+        # for dyhead_layer in self.dyhead:
+        # x = dyhead_layer(x)
 
         for i in range(self.nl):
             x[i] = torch.cat((self.cv2[i](x[i]), self.cv3[i](x[i])), 1)
